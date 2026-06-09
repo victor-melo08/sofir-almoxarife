@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Estoque — Minuterias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="shell">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-title">ALMOXARIFE</div>
+      <div class="logo-sub">CONTROLE DE ESTOQUE</div>
+    </div>
+    <nav>
+      <div class="nav-item active" onclick="switchTab('estoque',this)">
+        <span class="ico">⊟</span><span class="nav-label">Estoque</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('cadastro',this)">
+        <span class="ico">⊕</span><span class="nav-label">Cadastro de produtos</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('entrada',this)">
+        <span class="ico">↓</span><span class="nav-label">Solicitação de entrada</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('retirada',this)">
+        <span class="ico">↑</span><span class="nav-label">Registrar retirada</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('historico',this)">
+        <span class="ico">≡</span><span class="nav-label">Histórico</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('relatorios',this)">
+        <span class="ico">📋</span><span class="nav-label">Relatórios</span>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ═══ MAIN ═══ -->
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Estoque</div>
+        <div class="topbar-sub" id="topbar-sub">Visão geral dos materiais</div>
+      </div>
+      <div id="topbar-actions"></div>
+    </header>
+    <div class="content">
+
+      <!-- ══ ESTOQUE ══ -->
+      <section id="sec-estoque" class="section active">
+        <div class="metrics" id="metrics"></div>
+        <div class="table-card">
+          <div class="table-toolbar">
+            <input class="search-input" type="text" id="est-search" placeholder="🔍 Buscar por código ou nome..." oninput="renderEstoque()">
+            <select class="filter-sel" id="est-familia" onchange="renderEstoque()">
+              <option value="">Todas as famílias</option>
+            </select>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th style="width:28px"></th>
+                <th style="width:90px">Código</th>
+                <th>Nome do produto</th>
+                <th style="width:170px">Família</th>
+                <th style="width:185px">Pedidos</th>
+                <th style="width:75px">Total</th>
+                <th style="width:90px">Status</th>
+                <th style="width:65px">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="est-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ══ CADASTRO ══ -->
+      <section id="sec-cadastro" class="section">
+        <div id="alert-cad" class="alert"></div>
+        <div class="form-card">
+          <h3><span class="badge-num">1</span> Novo produto</h3>
+          <div class="form-grid">
+            <div class="fg">
+              <label>Código <span style="color:var(--text3);font-weight:400">(automático)</span></label>
+              <input class="inp mono" type="text" id="cad-cod" readonly>
+            </div>
+            <div class="fg">
+              <label>Família</label>
+              <select class="inp" id="cad-familia"></select>
+            </div>
+            <div class="fg full">
+              <label>Nome / Descrição do material</label>
+              <input class="inp" type="text" id="cad-nome" placeholder="Ex: Arruela de Pressão Ø22">
+            </div>
+            <div class="fg full">
+              <label>Local de armazenamento</label>
+              <input class="inp" type="text" id="cad-local" placeholder="Ex: Caixa A-01, Prateleira 3...">
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:18px;align-items:center">
+            <button class="btn btn-primary" onclick="cadastrarProduto()">✓ Salvar produto</button>
+            <button class="btn btn-ghost" onclick="limparCad()">Limpar</button>
+            <span id="cad-preview" style="font-size:12px;color:var(--text3);font-family:var(--mono)"></span>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar">
+            <input class="search-input" type="text" id="cad-search" placeholder="🔍 Buscar produto cadastrado..." oninput="renderCadastro()">
+            <select class="filter-sel" id="cad-familia-f" onchange="renderCadastro()">
+              <option value="">Todas as famílias</option>
+            </select>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th style="width:90px">Código</th>
+                <th>Nome</th>
+                <th style="width:190px">Família</th>
+                <th>Local</th>
+                <th style="width:75px">Estoque</th>
+                <th style="width:65px">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="cad-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ══ ENTRADA ══ -->
+      <section id="sec-entrada" class="section">
+        <div id="alert-ent" class="alert"></div>
+        <div class="form-card" style="margin-bottom:12px">
+          <h3><span class="badge-num">↓</span> Solicitação de entrada de material</h3>
+          <p class="form-hint">Adicione um ou mais produtos. Digite o código para localizar.</p>
+          <div id="ent-blocos"></div>
+          <button class="btn-dashed" onclick="addEntradaBloco()">+ Adicionar produto à solicitação</button>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="confirmarEntrada()">✓ Confirmar entrada</button>
+          <button class="btn btn-ghost" onclick="resetEntrada()">Limpar tudo</button>
+        </div>
+      </section>
+
+      <!-- ══ RETIRADA ══ -->
+      <section id="sec-retirada" class="section">
+        <div id="alert-ret" class="alert"></div>
+        <div class="form-card" style="margin-bottom:12px">
+          <h3><span class="badge-num">↑</span> Nova retirada de material</h3>
+          <p class="form-hint">Adicione produtos pelo código. Informe a quantidade por pedido (0 = não retirar).</p>
+          <div id="ret-blocos"></div>
+          <button class="btn-dashed" onclick="addRetBloco()">+ Adicionar produto à retirada</button>
+          <div class="divider"></div>
+          <div class="form-grid">
+            <div class="fg">
+              <label>Responsável *</label>
+              <input class="inp" type="text" id="ret-resp" placeholder="Nome do colaborador">
+            </div>
+            <div class="fg">
+              <label>Observação (opcional)</label>
+              <input class="inp" type="text" id="ret-obs" placeholder="Ex: OS 1234, Linha A...">
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="confirmarRetirada()">✓ Confirmar retirada</button>
+          <button class="btn btn-ghost" onclick="resetRetirada()">Limpar tudo</button>
+        </div>
+      </section>
+
+      <!-- ══ HISTÓRICO ══ -->
+      <section id="sec-historico" class="section">
+        <div class="table-card">
+          <div class="table-toolbar">
+            <input class="search-input" type="text" id="hist-search" placeholder="🔍 Buscar por código, produto ou responsável..." oninput="renderHistorico()">
+            <select class="filter-sel" id="hist-tipo-f" onchange="renderHistorico()">
+              <option value="">Entradas e retiradas</option>
+              <option value="entrada">Apenas entradas</option>
+              <option value="retirada">Apenas retiradas</option>
+            </select>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th style="width:28px"></th>
+                <th style="width:80px">Código</th>
+                <th style="width:90px">Tipo</th>
+                <th style="width:140px">Data/Hora</th>
+                <th>Produtos</th>
+                <th style="width:130px">Responsável</th>
+              </tr>
+            </thead>
+            <tbody id="hist-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ══ RELATÓRIOS ══ -->
+      <section id="sec-relatorios" class="section">
+
+        <!-- Seletor de tipo de relatório -->
+        <div class="rel-selector">
+          <button class="rel-tab active" onclick="switchRel('estoque-geral', this)">📦 Estoque Geral</button>
+          <button class="rel-tab" onclick="switchRel('produtos', this)">🔩 Produtos Cadastrados</button>
+          <button class="rel-tab" onclick="switchRel('entradas', this)">↓ Entradas</button>
+          <button class="rel-tab" onclick="switchRel('retiradas', this)">↑ Retiradas</button>
+          <button class="rel-tab" onclick="switchRel('familias', this)">📂 Por Família</button>
+        </div>
+
+        <div class="rel-toolbar">
+          <div id="rel-filtros"></div>
+          <button class="btn btn-primary" onclick="imprimirRelatorio()" style="margin-left:auto">🖨️ Imprimir / PDF</button>
+        </div>
+
+        <!-- Área de conteúdo do relatório -->
+        <div id="rel-conteudo"></div>
+
+      </section>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- Modal de confirmação -->
+<div id="modal-overlay" class="modal-overlay" onclick="fecharModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">Confirmar exclusão</div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-danger" id="modal-confirm-btn">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/dados.js"></script>
+<script src="js/estoque.js"></script>
+<script src="js/cadastro.js"></script>
+<script src="js/entrada.js"></script>
+<script src="js/retirada.js"></script>
+<script src="js/historico.js"></script>
+<script src="js/relatorios.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
