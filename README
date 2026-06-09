@@ -1,0 +1,61 @@
+# 🔩 Controle de Estoque — Minuterias
+
+Sistema web para controle de estoque de parafusos, porcas, arruelas e similares, com rastreamento por pedido de compra.
+
+## ✅ Funcionalidades
+
+- **Cadastro de produtos** com código automático sequencial (S001, S002...)
+- **Solicitação de entrada** de material com múltiplos produtos e pedidos por solicitação (código E001, E002...)
+- **Retirada de material** com múltiplos produtos, rastreamento por pedido individual e geração de código de retirada (R001, R002...)
+- **Estoque em tempo real** com detalhamento por pedido
+- **Histórico completo** de entradas e retiradas
+- **Exclusão de produtos** cadastrados
+- **Proteção contra código duplicado** no cadastro
+- Dados salvos no `localStorage` do navegador (persistência automática)
+
+## 📁 Estrutura do projeto
+
+```
+estoque-minuterias/
+├── index.html          # Página principal
+├── css/
+│   └── style.css       # Estilos da aplicação
+├── js/
+│   ├── app.js          # Inicialização e navegação
+│   ├── dados.js        # Estado global e localStorage
+│   ├── estoque.js      # Aba de estoque
+│   ├── cadastro.js     # Cadastro de produtos
+│   ├── entrada.js      # Solicitação de entrada
+│   ├── retirada.js     # Retirada de material
+│   └── historico.js    # Histórico de movimentações
+└── README.md
+```
+
+## 🚀 Como usar
+
+1. Faça o download ou clone o repositório
+2. Abra o arquivo `index.html` no navegador
+3. Não precisa de servidor, instalação ou internet
+
+```bash
+git clone https://github.com/SEU_USUARIO/estoque-minuterias.git
+cd estoque-minuterias
+# Abra o index.html no navegador
+```
+
+## 💾 Armazenamento
+
+Os dados são salvos automaticamente no `localStorage` do navegador. Isso significa:
+- Os dados **persistem** ao fechar e reabrir o navegador
+- Os dados ficam **apenas no seu computador** (sem servidor)
+- Para backup, use a função exportar (a implementar futuramente)
+
+## 🛠 Tecnologias
+
+- HTML5 puro
+- CSS3 com variáveis customizadas
+- JavaScript vanilla (sem dependências externas)
+- Google Fonts (IBM Plex Sans + IBM Plex Mono)
+
+---
+Desenvolvido para controle interno de almoxarife de minuterias.
