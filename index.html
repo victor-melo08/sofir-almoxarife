@@ -781,7 +781,7 @@ window.confirmarRetirada=async function(){
         const ret=retiradas.find(r=>r.pedido===l.pedido);
         if(ret){const novoQtd=l.qtd-ret.qtd; histItens.push({cod:ret.cod,nome:p.nome,familia:p.familia,pedido:l.pedido,qtd:ret.qtd,saldo:novoQtd}); return{...l,qtd:novoQtd};}
         return l;
-      });
+      }).filter(l=>l.qtd>0); // remove pedidos zerados
       batch.update(doc(db,'produtos',p.firestoreId),{lotes:novosLotes});
     });
     batch.set(doc(collection(db,'historico')),{codigo:codRet,tipo:'retirada',ts:fmtDate(),tsMs:Date.now(),itens:histItens,resp,obs});
